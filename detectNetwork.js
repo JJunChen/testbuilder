@@ -16,18 +16,36 @@ var detectNetwork = function(cardNumber) {
   let prefix = cardNumber[0];
   let length = cardNumber.length;
 
-  if (prefix === '3' || prefix === '5') {
-  	prefix += cardNumber[1];
+  if (prefix === '3') {
+  	prefix = cardNumber.slice(0, 2);
+  } else if (prefix === '5') {
+  	if (cardNumber[1] === '0') {
+  		prefix = cardNumber.slice(0, 4);
+  	} else {
+  		prefix = cardNumber.slice(0, 2);
+  	}
+  } else if (prefix === '6') {
+  	if (cardNumber[1] === '0' || cardNumber[1] === '3') {
+  		prefix = cardNumber.slice(0, 4);
+  	} else if (cardNumber[1] === '4') {
+		prefix = cardNumber.slice(0, 3);
+  	} else if (cardNumber[1] === '5') {
+  		prefix = cardNumber.slice(0, 2);
+  	}
   }
 
   if (['38', '39'].includes(prefix) && length === 14) {
   	return 'Diner\'s Club';
-  } else if ((prefix === '34' || prefix === '37') && length === 15) {
+  } else if (['34', '37'].includes(prefix) && length === 15) {
   	return 'American Express';
   } else if ((prefix === '4') && [13, 16, 19].includes(length)) {
   	return 'Visa';
   } else if (['51', '52', '53', '54', '55'].includes(prefix) && length === 16) {
   	return 'MasterCard';
+  } else if (['6011', '644', '645', '646', '647', '648', '649', '65'].includes(prefix) && [16, 19].includes(length)) {
+  	return 'Discover';
+  } else if (['5018', '5020', '5038', '6304'].includes(prefix) && [12, 13, 14, 15, 16, 17, 18, 19].includes(length)) {
+  	return 'Maestro';
   }
 };
 
