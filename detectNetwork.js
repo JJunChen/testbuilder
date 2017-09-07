@@ -13,39 +13,36 @@ var detectNetwork = function(cardNumber) {
   // The American Express network always starts with a 34 or 37 and is 15 digits long
 
   // Once you've read this, go ahead and try to implement this function, then return to the console.
-  let prefix = cardNumber[0];
-  let length = cardNumber.length;
+  let prefixLengths = [6, 4, 3, 2, 1];
+  let cardLength = cardNumber.length;
 
-  if (prefix === '3') {
-  	prefix = cardNumber.slice(0, 2);
-  } else if (prefix === '5') {
-  	if (cardNumber[1] === '0') {
-  		prefix = cardNumber.slice(0, 4);
-  	} else {
-  		prefix = cardNumber.slice(0, 2);
-  	}
-  } else if (prefix === '6') {
-  	if (cardNumber[1] === '0' || cardNumber[1] === '3') {
-  		prefix = cardNumber.slice(0, 4);
-  	} else if (cardNumber[1] === '4') {
-		prefix = cardNumber.slice(0, 3);
-  	} else if (cardNumber[1] === '5') {
-  		prefix = cardNumber.slice(0, 2);
+  for (let prefixLength of prefixLengths) {
+  	let prefix = cardNumber.slice(0, prefixLength);
+  	let network = findNetworkWithPrefix(prefix, cardLength);
+
+  	if (typeof(network) === 'string') {
+  		return network;
   	}
   }
+};
 
-  if (['38', '39'].includes(prefix) && length === 14) {
+var findNetworkWithPrefix = function (prefix, cardLength) {
+  if (['38', '39'].includes(prefix) && cardLength === 14) {
   	return 'Diner\'s Club';
-  } else if (['34', '37'].includes(prefix) && length === 15) {
+  } else if (['34', '37'].includes(prefix) && cardLength === 15) {
   	return 'American Express';
-  } else if ((prefix === '4') && [13, 16, 19].includes(length)) {
+  } else if ((prefix === '4') && [13, 16, 19].includes(cardLength)) {
   	return 'Visa';
-  } else if (['51', '52', '53', '54', '55'].includes(prefix) && length === 16) {
+  } else if (['51', '52', '53', '54', '55'].includes(prefix) && cardLength === 16) {
   	return 'MasterCard';
-  } else if (['6011', '644', '645', '646', '647', '648', '649', '65'].includes(prefix) && [16, 19].includes(length)) {
+  } else if (['6011', '644', '645', '646', '647', '648', '649', '65'].includes(prefix) && [16, 19].includes(cardLength)) {
   	return 'Discover';
-  } else if (['5018', '5020', '5038', '6304'].includes(prefix) && [12, 13, 14, 15, 16, 17, 18, 19].includes(length)) {
+  } else if (['5018', '5020', '5038', '6304'].includes(prefix) && [12, 13, 14, 15, 16, 17, 18, 19].includes(cardLength)) {
   	return 'Maestro';
+  } else if (((+prefix >= 622126 && +prefix <= 622925) || (+prefix >= 624 && +prefix <= 626) || (+prefix >= 6282 && +prefix <= 6288)) && [16, 17, 18, 19].includes(cardLength)) {
+  	return 'China UnionPay';
+  } else if (['4903', '4905', '4911', '4936', '564182', '633110', '6333', '6759'].includes(prefix) && [16, 18, 19].includes(cardLength)) {
+  	return 'Switch';
   }
 };
 

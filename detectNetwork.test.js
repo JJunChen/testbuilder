@@ -181,5 +181,46 @@ describe('Maestro', function() {
   });
 });
 
-describe('should support China UnionPay')
-describe('should support Switch')
+describe('should support China UnionPay', function() {
+  var expect = chai.expect;
+
+  let prefixes = [];
+  for (let i = 622126; i <= 622925; i++) {
+    prefixes.push(i.toString());
+  }
+  prefixes.push('624', '625', '626', '6282', '6283', '6284', '6285', '6286', '6287', '6288');
+  let cardLengths = ['16', '17', '18', '19'];
+  let suffixes = '1234567890123456';
+
+  prefixes.forEach(function(prefix) {
+    cardLengths.forEach(function(cardLength) {
+      let suffixLength = cardLength - prefix.length;
+      let suffix = suffixes.slice(0, suffixLength);
+      let cardNumber = prefix + suffix;
+
+      it('has a prefix of ' + prefix + ' and a length of ' + cardLength, function() {
+        expect(detectNetwork(cardNumber)).to.equal('China UnionPay');
+      });
+    });
+  });
+});
+
+describe('should support Switch', function() {
+  var expect = chai.expect;
+
+  let prefixes = ['4903', '4905', '4911', '4936', '564182', '633110', '6333', '6759'];
+  let cardLengths = ['16', '18', '19'];
+  let suffixes = '123456789012345';
+
+  prefixes.forEach(function(prefix) {
+    cardLengths.forEach(function(cardLength) {
+      let suffixLength = cardLength - prefix.length;
+      let suffix = suffixes.slice(0, suffixLength);
+      let cardNumber = prefix + suffix;
+
+      it('has a prefix of ' + prefix + ' and a length of ' + cardLength, function() {
+        expect(detectNetwork(cardNumber)).to.equal('Switch');
+      });
+    });
+  });
+});
